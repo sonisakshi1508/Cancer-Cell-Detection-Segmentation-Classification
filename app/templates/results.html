@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Analysis Results — PathAI{% endblock %}
+{% block content %}
+
+<!-- Loading state -->
+<div id="resultsLoading" class="loading-state" role="status" aria-live="polite">
+    <div class="loading-spinner" aria-hidden="true"></div>
+    <p class="loading-text">Loading analysis results…</p>
+</div>
+
+<!-- Error state -->
+<div id="resultsError" class="alert alert-danger hidden" role="alert" aria-live="assertive"></div>
+
+<!-- Results content (shown after load) -->
+<div id="resultsContent" class="hidden">
+
+    <div class="page-header">
+        <div class="page-header-left">
+            <h1 class="page-title">Analysis Results</h1>
+            <p class="page-subtitle">Nuclei detection and phenotype classification</p>
+        </div>
+        <div>
+            <a href="{{ url_for('ui.analyze') }}" class="btn btn-primary btn-sm">🔬 New Analysis</a>
+        </div>
+    </div>
+
+    <!-- Processing time badge -->
+    <p class="processing-time" id="resTime">
+        ⏱ Processing time: –
+    </p>
+
+    <!-- ── Nuclei count metrics ─────────────────────────────── -->
+    <div class="metrics-grid">
+        <div class="metric-card metric-card--primary">
+            <div class="metric-value" id="resTotal">–</div>
+            <div class="metric-label">Total Nuclei</div>
+        </div>
+        <div class="metric-card metric-card--danger">
+            <div class="metric-value" id="resMalignant">–</div>
+            <div class="metric-label">Malignant / Dysplastic</div>
+        </div>
+        <div class="metric-card metric-card--warning">
+            <div class="metric-value" id="resInflammatory">–</div>
+            <div class="metric-label">Inflammatory</div>
+        </div>
+        <div class="metric-card metric-card--success">
+            <div class="metric-value" id="resHealthy">–</div>
+            <div class="metric-label">Healthy Epithelial</div>
+        </div>
+        <div class="metric-card metric-card--info">
+            <div class="metric-value" id="resStromal">–</div>
+            <div class="metric-label">Stromal</div>
+        </div>
+        <div class="metric-card metric-card--other">
+            <div class="metric-value" id="resOther">–</div>
+            <div class="metric-label">Other</div>
+        </div>
+    </div>
+
+    <!-- ── Image panels ─────────────────────────────────────── -->
+    <div class="results-grid">
+        <div class="result-image-card">
+            <h3>Original Image</h3>
+            <img id="resOrigImg" class="result-img" alt="Original uploaded histopathology image">
+        </div>
+        <div class="result-image-card">
+            <h3>Segmentation Mask</h3>
+            <img id="resMaskImg" class="result-img" alt="U-Net binary nuclei segmentation mask">
+        </div>
+    </div>
+
+    <!-- ── Overlay + legend ─────────────────────────────────── -->
+    <div class="result-image-card result-image-card--full">
+        <h3>Classification Overlay</h3>
+        <img id="resOverlayImg" class="result-img" alt="Colour-coded nuclei classification overlay">
+
+        <div class="legend">
+            <div class="legend-item">
+                <span class="legend-dot" style="background: var(--nuc-malignant);"></span>
+                <span>Malignant / Dysplastic</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-dot" style="background: var(--nuc-inflammatory);"></span>
+                <span>Inflammatory</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-dot" style="background: var(--nuc-healthy);"></span>
+                <span>Healthy Epithelial</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-dot" style="background: var(--nuc-stromal);"></span>
+                <span>Stromal</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-dot" style="background: var(--nuc-other);"></span>
+                <span>Other</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Disclaimer ──────────────────────────────────────── -->
+    <div class="disclaimer-box">
+        <span class="disc-icon">⚠️</span>
+        <span>
+            <strong>Research Note:</strong>
+            Malignant/Dysplastic nuclei are identified according to CoNSeP dataset annotations.
+            These results are for academic research purposes only and do not constitute a clinical
+            diagnosis or medical advice.
+        </span>
+    </div>
+
+    <!-- ── Actions ─────────────────────────────────────────── -->
+    <div class="quick-actions">
+        <a href="{{ url_for('ui.analyze') }}" class="btn btn-primary">🔬 New Analysis</a>
+        <a href="{{ url_for('ui.history_page') }}" class="btn btn-ghost">📋 View History</a>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>window.ANALYSIS_ID = {{ analysis_id }};</script>
+{% endblock %}
